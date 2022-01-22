@@ -16,14 +16,14 @@
         };
         socket.onopen = function(event) {
             var ta = document.getElementById('responseText');
-            ta.value = "Web Socket opened!";
+            ta.value = "连接到服务器！";
         };
         socket.onclose = function(event) {
             var ta = document.getElementById('responseText');
-            ta.value = ta.value + "Web Socket closed";
+            ta.value = ta.value + "从服务器退出！";
         };
     } else {
-        alert("Your browser does not support Web Socket.");
+        alert("服务器连接失败（大概是你的浏览器版本太低）");
     }
 
     function send(message) {
@@ -31,15 +31,15 @@
         if (socket.readyState == WebSocket.OPEN) {
             socket.send(message);
         } else {
-            alert("The socket is not open.");
+            alert("连接丢失");
         }
     }
 </script>
 <form onsubmit="return false;">
     <input type="text" name="message" value="Hello, World!"><input
-        type="button" value="Send Web Socket Data"
+        type="button" value="发送"
         onclick="send(this.form.message.value)">
-    <h3>Output</h3>
+    <h3>↓聊天室↓</h3>
     <textarea id="responseText" style="width: 500px; height: 300px;"></textarea>
 </form>
 </body>

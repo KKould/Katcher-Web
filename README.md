@@ -3,6 +3,8 @@
 #### 介绍
 以Netty实现类似SpringMVC的功能，目前作为个人Netty学习项目
 
+聊天页面: http://localhost:2048/chat.html
+
 #### Version
 
 - 0.0.1：

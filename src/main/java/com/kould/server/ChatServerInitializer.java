@@ -1,6 +1,6 @@
 package com.kould.server;
 
-import com.kould.handler.HttpRequestHandler;
+import com.kould.handler.HttpRequestFileHandler;
 import com.kould.handler.TextWebSocketFrameHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -26,7 +26,7 @@ public class ChatServerInitializer extends ChannelInitializer<Channel> {
         pipeline.addLast(new HttpServerCodec()) ;
         pipeline.addLast(new ChunkedWriteHandler()) ;
         pipeline.addLast(new HttpObjectAggregator(64 * 1024));
-        pipeline.addLast(new HttpRequestHandler("/chat"));
+        pipeline.addLast(new HttpRequestFileHandler("UTF-8"));
         pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
         pipeline.addLast(new TextWebSocketFrameHandler(group)) ;
     }
