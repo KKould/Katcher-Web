@@ -4,19 +4,13 @@ import com.kould.server.ChatServerInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.group.ChannelGroup;
-import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.util.concurrent.ImmediateEventExecutor;
 
 import java.net.InetSocketAddress;
 
 public class ChatServer {
-
-    private final ChannelGroup group = new DefaultChannelGroup(ImmediateEventExecutor.INSTANCE);
 
     private final EventLoopGroup workerGroup = new NioEventLoopGroup();
 
@@ -25,7 +19,7 @@ public class ChatServer {
     public ChannelFuture start(InetSocketAddress address) {
         ServerBootstrap b = new ServerBootstrap();
         b.group(workerGroup).channel(NioServerSocketChannel.class)
-                .childHandler(createInitializer(group));
+                .childHandler(new ChatServerInitializer());
         ChannelFuture f = b.bind(address).syncUninterruptibly();
         channel = f.channel();
         return f ;
@@ -35,12 +29,7 @@ public class ChatServer {
         if (channel != null) {
             channel.close();
         }
-        group.close();
         workerGroup.shutdownGracefully();
-    }
-
-    protected ChannelInitializer<Channel> createInitializer(ChannelGroup group) {
-        return new ChatServerInitializer(group);
     }
 
     public static void main(String[] args) {
