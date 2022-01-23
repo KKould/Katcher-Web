@@ -1,6 +1,6 @@
 package com.kould;
 
-import com.kould.server.ChatServerInitializer;
+import com.kould.server.ServerInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -10,7 +10,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 import java.net.InetSocketAddress;
 
-public class ChatServer {
+public class ServerApplication {
 
     private final EventLoopGroup workerGroup = new NioEventLoopGroup();
 
@@ -19,7 +19,7 @@ public class ChatServer {
     public ChannelFuture start(InetSocketAddress address) {
         ServerBootstrap b = new ServerBootstrap();
         b.group(workerGroup).channel(NioServerSocketChannel.class)
-                .childHandler(new ChatServerInitializer());
+                .childHandler(new ServerInitializer());
         ChannelFuture f = b.bind(address).syncUninterruptibly();
         channel = f.channel();
         return f ;
@@ -33,7 +33,7 @@ public class ChatServer {
     }
 
     public static void main(String[] args) {
-        final ChatServer server = new ChatServer();
+        final ServerApplication server = new ServerApplication();
         ChannelFuture f = server.start(new InetSocketAddress(2048));
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override

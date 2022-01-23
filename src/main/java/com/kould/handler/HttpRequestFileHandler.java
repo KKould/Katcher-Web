@@ -11,9 +11,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.RandomAccessFile;
 
-/**
- *
- */
 public class HttpRequestFileHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
 
@@ -33,9 +30,10 @@ public class HttpRequestFileHandler extends SimpleChannelInboundHandler<FullHttp
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest req) throws Exception {
         String uri = req.uri();
         File file = new File(RESOURCE_PATH + uri) ;
-        logger.info(uri);
         if (!file.exists()) {
-            ctx.fireChannelRead(req.retain()) ;
+            FullHttpResponse response = new DefaultFullHttpResponse(
+                    HttpVersion.HTTP_1_1, HttpResponseStatus.NOT_FOUND);
+            ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
         } else {
             //判断是否是Http响应码100
             if (HttpUtil.is100ContinueExpected(req)) {

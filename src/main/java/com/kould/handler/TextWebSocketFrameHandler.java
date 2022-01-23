@@ -12,6 +12,10 @@ import org.slf4j.LoggerFactory;
 
 import java.net.SocketAddress;
 
+/**
+ * 可以通过自己处理HandShake进行横向拓展websocket端点
+ * https://www.jianshu.com/p/56216d1052d7
+ */
 public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
     Logger logger = LoggerFactory.getLogger(TextWebSocketFrameHandler.class);
@@ -19,13 +23,13 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
     private static final ChannelGroup group = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, TextWebSocketFrame twsf) throws Exception {
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, TextWebSocketFrame textWebSocketFrame) throws Exception {
         Channel incoming = channelHandlerContext.channel() ;
         for (Channel channel : group) {
             if (channel != incoming) {
-                channel.writeAndFlush(new TextWebSocketFrame("[" + incoming.remoteAddress() + "]" + twsf.text()));
+                channel.writeAndFlush(new TextWebSocketFrame("[" + incoming.remoteAddress() + "]" + textWebSocketFrame.text()));
             } else {
-                channel.writeAndFlush(new TextWebSocketFrame("[you]" + twsf.text()));
+                channel.writeAndFlush(new TextWebSocketFrame("[you]" + textWebSocketFrame.text()));
             }
         }
     }
@@ -50,19 +54,6 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
         }
         group.add(incoming);
         logger.info("客户端:" + socketAddress + "退出");
-    }
-
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        Channel incoming = ctx.channel();
-        SocketAddress socketAddress = incoming.remoteAddress();
-        logger.info("客户端:" + socketAddress + "在线");
-    }
-
-    @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        Channel incoming = ctx.channel();
-        System.out.println("客户端:"+incoming.remoteAddress()+"下线");
     }
 
     @Override
