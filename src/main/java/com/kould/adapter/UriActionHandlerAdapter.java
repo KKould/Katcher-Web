@@ -8,11 +8,11 @@ import java.util.Map;
 
 public class UriActionHandlerAdapter {
 
-    DefaultParameterNameDiscoverer discover = new DefaultParameterNameDiscoverer();
-
     private final Object controller ;
 
     private final Method method ;
+
+    private static final DefaultParameterNameDiscoverer discover = new DefaultParameterNameDiscoverer();
 
     public UriActionHandlerAdapter(Object controller, Method method) {
         this.controller = controller;
