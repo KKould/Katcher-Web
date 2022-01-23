@@ -37,7 +37,7 @@ public class HttpRequestActionHandler extends SimpleChannelInboundHandler<FullHt
 
     static {
         try {
-            CONTROLLER_MAP.put("/test",new UriActionHandlerAdapter(new TestController(), TestController.class.getMethod("test", String.class,String.class,String.class))) ;
+            CONTROLLER_MAP.put("GET/test",new UriActionHandlerAdapter(new TestController(), TestController.class.getMethod("test", String.class,String.class,String.class))) ;
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -45,23 +45,20 @@ public class HttpRequestActionHandler extends SimpleChannelInboundHandler<FullHt
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, FullHttpRequest fullHttpRequest) throws Exception {
-        FullHttpResponse response ;
-        Map<String, Object> params = null;
-        if(fullHttpRequest.method() == HttpMethod.GET){
-            params = getGetParamsFromChannel(fullHttpRequest);
-        }else if(fullHttpRequest.method() == HttpMethod.POST){
-            params = getPostParamsFromChannel(fullHttpRequest);
-        } else {
-            response = responseOk(HttpResponseStatus.BAD_REQUEST, null) ;
-        }
-
+        HttpMethod status = fullHttpRequest.method() ;
         String fullUri = fullHttpRequest.uri();
-        String uri = null;
-        uri = getUri(fullUri);
-        UriActionHandlerAdapter uriActionHandlerAdapter = CONTROLLER_MAP.get(uri);
+        String uri = getUri(fullUri);
+        UriActionHandlerAdapter uriActionHandlerAdapter = CONTROLLER_MAP.get(status.name() + uri);
         if (uriActionHandlerAdapter == null) {
             channelHandlerContext.fireChannelRead(fullHttpRequest.retain()) ;
         } else {
+            FullHttpResponse response ;
+            Map<String, Object> params = null;
+            if (HttpMethod.GET.equals(status)) {
+                params = getGetParamsFromChannel(fullHttpRequest);
+            } else {
+                params = getPostParamsFromChannel(fullHttpRequest);
+            }
             Object data = uriActionHandlerAdapter.actionInvoke(params);
             ByteBuf buf = copiedBuffer(gson.toJson(data), CharsetUtil.UTF_8);
             response = responseOk(HttpResponseStatus.OK, buf);
