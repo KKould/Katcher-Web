@@ -59,7 +59,7 @@ public class KatcherApplication {
         workerGroup.shutdownGracefully();
     }
 
-    public static void run(String[] args, String scanPath, int port) {
+    public static void run(String[] args, int port, String scanPath) {
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
         ctx.register(KatcherConfig.class);
         ctx.scan(scanPath);
