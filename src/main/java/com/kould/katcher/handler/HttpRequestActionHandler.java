@@ -1,9 +1,8 @@
-package com.kould.handler;
+package com.kould.katcher.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.kould.adapter.UriActionHandlerAdapter;
-import com.kould.controller.TestController;
+import com.kould.katcher.adapter.UriActionHandlerAdapter;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
@@ -32,16 +31,7 @@ public class HttpRequestActionHandler extends SimpleChannelInboundHandler<FullHt
 
     private static final Gson gson = new Gson();
 
-    private static final Map<String, UriActionHandlerAdapter> CONTROLLER_MAP = new ConcurrentHashMap<>();
-
-
-    static {
-        try {
-            CONTROLLER_MAP.put("GET/test",new UriActionHandlerAdapter(new TestController(), TestController.class.getMethod("test", String.class,String.class,String.class))) ;
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-    }
+    public static final Map<String, UriActionHandlerAdapter> CONTROLLER_MAP = new ConcurrentHashMap<>();
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, FullHttpRequest fullHttpRequest) throws Exception {

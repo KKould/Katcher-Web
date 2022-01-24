@@ -1,8 +1,11 @@
-package com.kould.utils;
+package com.kould.katcher.utils;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 用于获取文件后缀对应的HttpContentType
+ */
 public class HttpContentTypeUtils {
     /**
      * 两种初始化Map常量

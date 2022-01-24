@@ -1,6 +1,6 @@
-package com.kould.handler;
+package com.kould.katcher.handler;
 
-import com.kould.utils.HttpContentTypeUtils;
+import com.kould.katcher.utils.HttpContentTypeUtils;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.ssl.SslHandler;
