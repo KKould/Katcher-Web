@@ -1,4 +1,4 @@
-package com.kould.katcher.controller;
+package com.kould.katcher.test;
 
 import com.kould.katcher.annotation.Controller;
 import com.kould.katcher.annotation.Mapping;

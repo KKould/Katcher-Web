@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.RandomAccessFile;
+import java.net.URL;
 
 public class HttpRequestFileHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
@@ -29,8 +30,8 @@ public class HttpRequestFileHandler extends SimpleChannelInboundHandler<FullHttp
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest req) throws Exception {
         String uri = req.uri();
-        File file = new File(RESOURCE_PATH + uri) ;
-        if (!file.exists()) {
+        URL fileUri = ClassLoader.getSystemResource(uri.substring(1));
+        if (fileUri == null) {
             FullHttpResponse response = new DefaultFullHttpResponse(
                     HttpVersion.HTTP_1_1, HttpResponseStatus.NOT_FOUND);
             ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
@@ -43,11 +44,12 @@ public class HttpRequestFileHandler extends SimpleChannelInboundHandler<FullHttp
             }
             HttpResponse response = new DefaultHttpResponse(req.protocolVersion(), HttpResponseStatus.OK);
             boolean keepAlive = HttpUtil.isKeepAlive(req);
+            RandomAccessFile randomAccessFile = new RandomAccessFile(fileUri.getFile(), "r");
+            long fileLength = randomAccessFile.length();
             if (keepAlive) {
-                response.headers().set(HttpHeaderNames.CONTENT_LENGTH, file.length());
+                response.headers().set(HttpHeaderNames.CONTENT_LENGTH, fileLength);
                 response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
             }
-            RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
             response.headers().set(HttpHeaderNames.CONTENT_TYPE,
                     //获取文件的后缀名并拿到对应的contentType
                     HttpContentTypeUtils.getContentType(uri.substring(uri.lastIndexOf("."))) + charsetCode) ;
@@ -55,7 +57,7 @@ public class HttpRequestFileHandler extends SimpleChannelInboundHandler<FullHttp
             if (ctx.pipeline().get(SslHandler.class) == null) {
                 // DefaultFileRegion是直接传输文件的
                 // ChunkedNioFile是可以加工的
-                ctx.write(new DefaultFileRegion(randomAccessFile.getChannel(), 0,  file.length()));
+                ctx.write(new DefaultFileRegion(randomAccessFile.getChannel(), 0,  fileLength));
             } else {
                 ctx.write(new ChunkedNioFile(randomAccessFile.getChannel())) ;
             }

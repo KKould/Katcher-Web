@@ -59,20 +59,17 @@ public class KatcherApplication {
         workerGroup.shutdownGracefully();
     }
 
-    public static void run(String[] args, String scanPath) {
+    public static void run(String[] args, String scanPath, int port) {
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
         ctx.register(KatcherConfig.class);
         ctx.scan(scanPath);
         ctx.refresh();
         final KatcherApplication server = new KatcherApplication();
-        ChannelFuture f = server.start(new InetSocketAddress(2048));
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run(){
-                server.destroy();
-                ctx.close();
-            }
-        });
+        ChannelFuture f = server.start(new InetSocketAddress(port));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            server.destroy();
+            ctx.close();
+        }));
         f.channel().closeFuture().syncUninterruptibly();
     }
 }
