@@ -5,6 +5,7 @@ import com.kould.katcher.adapter.UriActionHandlerAdapter;
 import com.kould.katcher.annotation.Controller;
 import com.kould.katcher.annotation.Mapping;
 import com.kould.katcher.handler.HttpRequestActionHandler;
+import com.kould.katcher.serialize.SerializeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
@@ -37,8 +38,9 @@ public class KatcherInitListener implements ApplicationListener<ContextRefreshed
                         String parentUri = controller.getClass().getAnnotation(Controller.class).uri();
                         String childUri = mapping.uri();
                         String httpMethod = mapping.method().getValue();
+                        SerializeHandler handler = mapping.returnType().getSerializeHandler();
                         HttpRequestActionHandler.CONTROLLER_MAP.put(httpMethod + parentUri + childUri
-                                , new UriActionHandlerAdapter(controller,method));
+                                , new UriActionHandlerAdapter(controller,method, handler));
                     }
                 }
             }

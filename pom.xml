@@ -96,7 +96,7 @@
       <resource>
         <directory>src/main/resources</directory>
         <includes>
-          <include>**/*.html</include>
+          <include>**/*.*</include>
         </includes>
       </resource>
     </resources>

@@ -13,10 +13,6 @@ public enum HttpMethod {
         return value;
     }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
-
     HttpMethod(String value) {
         this.value = value;
     }

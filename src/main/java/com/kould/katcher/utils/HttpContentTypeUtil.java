@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * 用于获取文件后缀对应的HttpContentType
  */
-public class HttpContentTypeUtils {
+public class HttpContentTypeUtil {
     /**
      * 两种初始化Map常量
      * 1.new HashMap

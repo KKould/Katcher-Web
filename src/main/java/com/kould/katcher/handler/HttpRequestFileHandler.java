@@ -1,6 +1,6 @@
 package com.kould.katcher.handler;
 
-import com.kould.katcher.utils.HttpContentTypeUtils;
+import com.kould.katcher.utils.HttpContentTypeUtil;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.ssl.SslHandler;
@@ -51,7 +51,7 @@ public class HttpRequestFileHandler extends SimpleChannelInboundHandler<FullHttp
             }
             response.headers().set(HttpHeaderNames.CONTENT_TYPE,
                     //获取文件的后缀名并拿到对应的contentType
-                    HttpContentTypeUtils.getContentType(uri.substring(uri.lastIndexOf("."))) + charsetCode) ;
+                    HttpContentTypeUtil.getContentType(uri.substring(uri.lastIndexOf("."))) + charsetCode) ;
             ctx.write(response);
             if (ctx.pipeline().get(SslHandler.class) == null) {
                 // DefaultFileRegion是直接传输文件的

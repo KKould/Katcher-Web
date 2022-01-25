@@ -2,6 +2,7 @@ package com.kould.katcher.annotation;
 
 
 import com.kould.katcher.status.HttpMethod;
+import com.kould.katcher.status.ReturnType;
 
 import java.lang.annotation.*;
 
@@ -15,4 +16,5 @@ import java.lang.annotation.*;
 public @interface Mapping {
     String uri();
     HttpMethod method();
+    ReturnType returnType() default ReturnType.JSON;
 }
