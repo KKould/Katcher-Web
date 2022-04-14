@@ -1,5 +1,6 @@
 package com.kould.katcher.server;
 
+import com.kould.katcher.handler.GlobalExceptionHandler;
 import com.kould.katcher.handler.HttpRequestFileHandler;
 import com.kould.katcher.handler.HttpRequestActionHandler;
 import com.kould.katcher.handler.TextWebSocketFrameHandler;
@@ -23,5 +24,6 @@ public class ServerInitializer extends ChannelInitializer<Channel> {
         pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
         pipeline.addLast(new TextWebSocketFrameHandler()) ;
         pipeline.addLast(new HttpRequestFileHandler("UTF-8"));
+        pipeline.addLast(new GlobalExceptionHandler());
     }
 }

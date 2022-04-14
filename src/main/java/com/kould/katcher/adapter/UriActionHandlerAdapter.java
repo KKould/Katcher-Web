@@ -25,11 +25,32 @@ public class UriActionHandlerAdapter {
 
     public Object actionInvoke(Map<String, Object> paramList) throws InvocationTargetException, IllegalAccessException {
         String[] parameterNames = discover.getParameterNames(method);
+        Class<?>[] parameterTypes = method.getParameterTypes();
         Object result ;
         if (parameterNames != null) {
             Object[] args = new Object[parameterNames.length] ;
             for (int i = 0; i < parameterNames.length; i++) {
+                Class<?> type = parameterTypes[i];
                 args[i] = paramList.get(parameterNames[i]);
+                if (args[i] == null && type.isPrimitive()) {
+                    if (byte.class.equals(type)) {
+                        args[i] = (byte) 0;
+                    } else if (char.class.equals(type)) {
+                        args[i] = (char) 0;
+                    } else if (short.class.equals(type)) {
+                        args[i] = (short) 0;
+                    } else if (int.class.equals(type)) {
+                        args[i] = 0;
+                    } else if (long.class.equals(type)) {
+                        args[i] = (long) 0;
+                    } else if (float.class.equals(type)) {
+                        args[i] = (float) 0;
+                    } else if (double.class.equals(type)) {
+                        args[i] = (double) 0;
+                    } else {
+                        throw new IllegalArgumentException("Primitive Param NoSuch"); //should be unreachable
+                    }
+                }
             }
             result = method.invoke(controller, args);
         } else {

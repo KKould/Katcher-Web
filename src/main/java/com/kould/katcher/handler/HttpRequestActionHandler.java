@@ -18,6 +18,7 @@ import io.netty.util.internal.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -34,7 +35,7 @@ public class HttpRequestActionHandler extends SimpleChannelInboundHandler<FullHt
     public static final Map<String, UriActionHandlerAdapter> CONTROLLER_MAP = new ConcurrentHashMap<>();
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, FullHttpRequest fullHttpRequest) throws Exception {
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, FullHttpRequest fullHttpRequest) throws InvocationTargetException, IllegalAccessException {
         HttpMethod status = fullHttpRequest.method() ;
         String fullUri = fullHttpRequest.uri();
         String uri = getUri(fullUri);
@@ -43,7 +44,7 @@ public class HttpRequestActionHandler extends SimpleChannelInboundHandler<FullHt
             channelHandlerContext.fireChannelRead(fullHttpRequest.retain()) ;
         } else {
             FullHttpResponse response ;
-            Map<String, Object> params = null;
+            Map<String, Object> params;
             if (HttpMethod.GET.equals(status)) {
                 params = getGetParamsFromChannel(fullHttpRequest);
             } else {
@@ -51,7 +52,7 @@ public class HttpRequestActionHandler extends SimpleChannelInboundHandler<FullHt
             }
             Object data = uriActionHandlerAdapter.actionInvoke(params);
             ByteBuf buf = copiedBuffer(gson.toJson(data), CharsetUtil.UTF_8);
-            response = responseOk(HttpResponseStatus.OK, buf);
+            response = responseOk(buf);
             // 发送响应
             channelHandlerContext.writeAndFlush(response)
                     .addListener(ChannelFutureListener.CLOSE);
@@ -93,13 +94,10 @@ public class HttpRequestActionHandler extends SimpleChannelInboundHandler<FullHt
     }
 
     private Map<String, Object> getJSONParams(FullHttpRequest fullHttpRequest) {
-        Map<String, Object> params = new HashMap<>();
-
         ByteBuf content = fullHttpRequest.content();
         byte[] reqContent = new byte[content.readableBytes()];
         content.readBytes(reqContent);
-        String strContent = null;
-        strContent = new String(reqContent, StandardCharsets.UTF_8);
+        String strContent = new String(reqContent, StandardCharsets.UTF_8);
         return gson.fromJson(strContent, new TypeToken<List<Object>>() {}.getType());
 
     }
@@ -134,13 +132,11 @@ public class HttpRequestActionHandler extends SimpleChannelInboundHandler<FullHt
         return params;
     }
 
-    private FullHttpResponse responseOk(HttpResponseStatus status, ByteBuf buf) {
+    private FullHttpResponse responseOk(ByteBuf buf) {
         FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
-                status,buf);
-        if(buf != null){
-            response.headers().set("Content-Type","text/plain;charset=UTF-8");
-            response.headers().set("Content-Length",response.content().readableBytes());
-        }
+                HttpResponseStatus.OK,buf);
+        response.headers().set("Content-Type","text/plain;charset=UTF-8");
+        response.headers().set("Content-Length",response.content().readableBytes());
         return response;
     }
 }

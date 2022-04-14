@@ -37,23 +37,13 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         Channel incoming = ctx.channel();
-        SocketAddress socketAddress = incoming.remoteAddress();
-        for (Channel channel : group) {
-            channel.writeAndFlush(new TextWebSocketFrame("[服务器] - " + socketAddress + "加入"));
-        }
         group.add(incoming);
-        logger.info("客户端:" + socketAddress + "加入");
     }
 
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
         Channel incoming = ctx.channel();
-        SocketAddress socketAddress = incoming.remoteAddress();
-        for (Channel channel : group) {
-            channel.writeAndFlush(new TextWebSocketFrame("[服务器] - " + socketAddress + "退出"));
-        }
         group.add(incoming);
-        logger.info("客户端:" + socketAddress + "退出");
     }
 
     @Override
