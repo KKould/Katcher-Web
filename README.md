@@ -21,14 +21,12 @@
 
 - 聊天页面: http://localhost:2048/chat.html
 
-
-
 #### 预定义接口 | API
 
 - ##### 类
-
+  
   - ###### KatcherApplication Katcher启动类
-
+    
     - start (InetSocketAddress address) : 用于手动启动Katcher
       - address 端口信息
     - destroy () : 关闭Katcher
@@ -38,22 +36,22 @@
       - scanPath 自定义包名称（即你写的代码所在的包名，可复数）
 
 - ##### 枚举
-
+  
   - ###### HttpMethod 表示Http请求方法
-
+    
     - HttpMethod.GET : Get方法
     - HttpMethod.POST : POST方法
     - HttpMethod.PUT : PUT方法
     - HttpMethod.DELETE : DELETE方法
 
 - ##### 注解
-
+  
   - ###### @Controller 用于修饰控制器类
-
+    
     - String uri : 该类下的路径前缀
-
+  
   - ###### @Mapping 用于修饰方法作路径映射
-
+    
     - String uri : 映射路径
     - HttpMethod method : Http请求方法
 
@@ -80,7 +78,6 @@ public class TestController {
         return args + args1 + args2;
     }
 }
-
 ```
 
 3、即刻运行！
@@ -95,7 +92,7 @@ Pom.xml打包推荐插件：
 <plugin>
     <artifactId>maven-assembly-plugin</artifactId>
     <configuration>
-    	<appendAssemblyId>false</appendAssemblyId>
+        <appendAssemblyId>false</appendAssemblyId>
         <descriptorRefs>
             <descriptorRef>jar-with-dependencies</descriptorRef>
           </descriptorRefs>
@@ -118,19 +115,27 @@ Pom.xml打包推荐插件：
 </plugin>
 ```
 
-
-
 #### 版本 | Version
 
+- 0.1.1
+  
+  - @Mapping方法支持基本数据类型
+  
+  - 更好的反馈应用中产生的错误，并断开连接
+  
+  - 
+
 - 0.1.0:
-  - 实现基本Http响应序列化
+  
+  - 实现基于Gson的Http响应序列化
   - 实现参数Json等格式传入
   - 通过反射自动对方法进行参数导入和业务方法装填
   - 内置Spring IOC容器
   - 实现基于Netty的启动器：KachterApplication
   - 基本实现Http下多HttpMethod的业务操作支持
+
 - 0.0.1：
+  
   - 通过webSocket实现Echo功能
   - 支持静态html文件返回
   - 内置/chat端点，用于Echo交互
-
