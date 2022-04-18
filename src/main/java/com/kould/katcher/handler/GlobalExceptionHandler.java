@@ -14,22 +14,19 @@ public class GlobalExceptionHandler extends ChannelDuplexHandler {
             try {
                 throw cause;
             } catch (Throwable e) {
-                e.printStackTrace();
+                logger.error(e.getMessage());
             }
         }
     }
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        ctx.write(msg,promise.addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture channelFuture) {
-                if(!channelFuture.isSuccess()){
-                    try {
-                        throw channelFuture.cause();
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                    }
+        ctx.write(msg,promise.addListener((ChannelFutureListener) channelFuture -> {
+            if(!channelFuture.isSuccess()){
+                try {
+                    throw channelFuture.cause();
+                } catch (Throwable e) {
+                    logger.error(e.getMessage());
                 }
             }
         }));

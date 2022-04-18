@@ -35,7 +35,7 @@ public class HttpRequestActionHandler extends SimpleChannelInboundHandler<FullHt
     public static final Map<String, UriActionHandlerAdapter> CONTROLLER_MAP = new ConcurrentHashMap<>();
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, FullHttpRequest fullHttpRequest) throws InvocationTargetException, IllegalAccessException {
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, FullHttpRequest fullHttpRequest) throws InvocationTargetException, IllegalAccessException, InstantiationException {
         HttpMethod status = fullHttpRequest.method() ;
         String fullUri = fullHttpRequest.uri();
         String uri = getUri(fullUri);
