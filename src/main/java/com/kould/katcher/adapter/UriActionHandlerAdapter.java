@@ -33,10 +33,12 @@ public class UriActionHandlerAdapter {
             for (int i = 0; i < parameterNames.length; i++) {
                 Class<?> type = parameterTypes[i];
                 args[i] = paramMap.get(parameterNames[i]);
-                if (type.isPrimitive()) {
+                // 判断是否为基本数据类型或Number子类(包装类)
+                if (type.isPrimitive() || Number.class.isAssignableFrom(type)) {
                     args[i] = str2Primitive(args[i], type);
                 } else {
                     for (Field field : type.getDeclaredFields()) {
+                        // Url对应参数的String类型值
                         Object fieldVal = paramMap.get(field.getName());
                         if (fieldVal != null) {
                             if (args[i] == null) {
@@ -57,7 +59,8 @@ public class UriActionHandlerAdapter {
     }
 
     private Object str2Primitive(Object arg, Class<?> type) {
-        if (arg == null) {
+        if (arg == null && type.isPrimitive()) {
+            // 仅仅为基本数据类型做填充
             if (byte.class.equals(type)) {
                 return (byte) 0;
             } else if (char.class.equals(type)) {
@@ -75,20 +78,21 @@ public class UriActionHandlerAdapter {
             } else {
                 throw new IllegalArgumentException("Primitive Param NoSuch"); //should be unreachable
             }
+            // 字符串或包装类处理
         } else if (arg instanceof String){
-            if (byte.class.equals(type)) {
+            if (byte.class.equals(type) || Byte.class.equals(type)) {
                 return Byte.parseByte((String) arg);
-            } else if (char.class.equals(type)) {
+            } else if (char.class.equals(type) || Character.class.equals(type)) {
                 return ((String) arg).charAt(0);
-            } else if (short.class.equals(type)) {
+            } else if (short.class.equals(type) || Short.class.equals(type)) {
                 return Short.parseShort((String) arg);
-            } else if (int.class.equals(type)) {
+            } else if (int.class.equals(type) || Integer.class.equals(type)) {
                 return Integer.parseInt((String) arg);
-            } else if (long.class.equals(type)) {
+            } else if (long.class.equals(type) || Long.class.equals(type)) {
                 return Long.parseLong((String) arg);
-            } else if (float.class.equals(type)) {
+            } else if (float.class.equals(type) || Float.class.equals(type)) {
                 return Float.parseFloat((String) arg);
-            } else if (double.class.equals(type)) {
+            } else if (double.class.equals(type) || Double.class.equals(type)) {
                 return Double.parseDouble((String) arg);
             } else {
                 return arg;
