@@ -13,14 +13,11 @@ import java.net.URL;
 
 public class HttpRequestFileHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
-
     Logger logger = LoggerFactory.getLogger(HttpRequestFileHandler.class) ;
 
     private final String charsetCode ;
 
     private static final String charset_prefix = "; charset=" ;
-
-    private static final String RESOURCE_PATH = System.getProperty("user.dir") + "\\src\\main\\resources\\";
 
     public HttpRequestFileHandler(String charsetCode) {
         this.charsetCode = charset_prefix + charsetCode  ;
@@ -29,7 +26,7 @@ public class HttpRequestFileHandler extends SimpleChannelInboundHandler<FullHttp
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest req) throws Exception {
         String uri = req.uri();
-        URL fileUri = ClassLoader.getSystemResource(uri.substring(1));
+        URL fileUri = this.getClass().getResource(uri);
         if (fileUri == null) {
             FullHttpResponse response = new DefaultFullHttpResponse(
                     HttpVersion.HTTP_1_1, HttpResponseStatus.NOT_FOUND);
